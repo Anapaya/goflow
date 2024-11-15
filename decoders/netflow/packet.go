@@ -77,6 +77,8 @@ type OptionsDataRecord struct {
 // Field does not contain the record value itself it is just a description of
 // what record value will look like.
 type Field struct {
+	EnterpriseNumber uint32
+
 	// A numeric value that represents the type of field.
 	Type uint16
 
@@ -86,7 +88,8 @@ type Field struct {
 
 type DataField struct {
 	// A numeric value that represents the type of field.
-	Type uint16
+	Type             uint16
+	EnterpriseNumber uint32
 
 	// The value (in bytes) of the field.
 	Value interface{}

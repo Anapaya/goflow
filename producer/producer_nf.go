@@ -155,6 +155,17 @@ func ConvertNetFlowDataSet(version uint16, baseTime uint32, uptime uint32, recor
 			continue
 		}
 
+		// SCION fields.
+		if df.EnterpriseNumber == 55324 {
+			switch df.Type {
+			case 32773:
+				DecodeUNumber(v, &(flowMessage.SCIONSrcISDAS))
+			case 32774:
+				DecodeUNumber(v, &(flowMessage.SCIONDstISDAS))
+			}
+			continue
+		}
+
 		switch df.Type {
 
 		// Statistics
@@ -286,6 +297,11 @@ func ConvertNetFlowDataSet(version uint16, baseTime uint32, uptime uint32, recor
 
 		case netflow.NFV9_FIELD_DIRECTION:
 			DecodeUNumber(v, &(flowMessage.FlowDirection))
+
+		case netflow.NFV9_FIELD_IN_PERMANENT_BYTES:
+			DecodeUNumber(v, &(flowMessage.Bytes))
+		case netflow.NFV9_FIELD_IN_PERMANENT_PKTS:
+			DecodeUNumber(v, &(flowMessage.Packets))
 
 		default:
 			if version == 9 {
