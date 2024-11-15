@@ -106,9 +106,20 @@ func DecodeTemplateSet(payload *bytes.Buffer) ([]TemplateRecord, error) {
 
 		fields := make([]Field, int(templateRecord.FieldCount))
 		for i := 0; i < int(templateRecord.FieldCount); i++ {
-			field := Field{}
-			err = utils.BinaryDecoder(payload, &field)
-			fields[i] = field
+			fld := struct {
+				Type   uint16
+				Length uint16
+			}{}
+			err = utils.BinaryDecoder(payload, &fld)
+			var enterpriseNumber uint32
+			if err == nil && fld.Type&0x8000 > 0 {
+				err = utils.BinaryDecoder(payload, &enterpriseNumber)
+			}
+			fields[i] = Field{
+				EnterpriseNumber: enterpriseNumber,
+				Type:             fld.Type,
+				Length:           fld.Length,
+			}
 		}
 		templateRecord.Fields = fields
 		records = append(records, templateRecord)
@@ -133,8 +144,9 @@ func DecodeDataSetUsingFields(payload *bytes.Buffer, listFields []Field) []DataF
 		for i, templateField := range listFields {
 			value := payload.Next(int(templateField.Length))
 			nfvalue := DataField{
-				Type:  templateField.Type,
-				Value: value,
+				Type:             templateField.Type,
+				EnterpriseNumber: templateField.EnterpriseNumber,
+				Value:            value,
 			}
 			dataFields[i] = nfvalue
 		}

@@ -94,7 +94,7 @@ message FlowMessage {
   bytes DstAddrEncap = 45;
   uint32 ProtoEncap = 46;
   uint32 EtypeEncap = 47;
-  
+
   uint32 IPTosEncap = 48;
   uint32 IPTTLEncap = 49;
   uint32 IPv6FlowLabelEncap = 50;
@@ -120,4 +120,8 @@ message FlowMessage {
   // Custom fields: start after ID 1000:
   // uint32 MyCustomField = 1000;
 
+  uint32 SCIONSrcISD = 1000;
+  uint32 SCIONDstISD = 1001;
+  uint64 SCIONSrcAS = 1002;
+  uint64 SCIONDstAS = 1003;
 }

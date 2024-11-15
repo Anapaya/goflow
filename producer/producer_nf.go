@@ -155,6 +155,25 @@ func ConvertNetFlowDataSet(version uint16, baseTime uint32, uptime uint32, recor
 			continue
 		}
 
+		// SCION fields.
+		if df.EnterpriseNumber == 55324 {
+			switch df.Type {
+			case 32769:
+				var isd uint16
+				DecodeUNumber(v, &isd)
+				flowMessage.SCIONSrcISD = uint32(isd)
+			case 32770:
+				var isd uint16
+				DecodeUNumber(v, &isd)
+				flowMessage.SCIONDstISD = uint32(isd)
+			case 32771:
+				DecodeUNumber(v, &(flowMessage.SCIONSrcAS))
+			case 32772:
+				DecodeUNumber(v, &(flowMessage.SCIONDstAS))
+			}
+			continue
+		}
+
 		switch df.Type {
 
 		// Statistics
